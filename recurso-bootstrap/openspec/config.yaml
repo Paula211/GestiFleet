@@ -1,0 +1,318 @@
+schema: spec-driven
+
+context: |
+  project_name: "gestifleet"
+  full_name: "Gestifleet - Gestión de concesionarios y reservas"
+  description: |
+    Aplicación web para gestión de concesionarios, vehículos, empleados y reservas.
+    Interfaz server-rendered con plantillas EJS y llamadas AJAX que consumen rutas
+    REST que devuelven JSON. Usuarios: administradores y empleados; los administradores
+    tienen permisos globales y los empleados están asociados a un concesionario.
+  domain: "fleet-management / concesionarios"
+  primary_users: |
+    - "administradores: CRUD completo sobre concesionarios, vehículos, empleados y reservas"
+    - "empleados: acceso a su concesionario, ver vehículos y gestionar reservas propias"
+  repo_url: "REPLACE_WITH_REPO_URL"
+  license: "MIT"
+  support_hours: "M-F 09:00-18:00 Europe/Madrid"
+
+agents:
+  default:
+    provider: "claude"
+    model: "claude" # ajustar versión si hace falta
+    temperature: 0.0
+    max_tokens: 4000
+    system_prompt: |
+      Eres un asistente técnico que genera especificaciones para un proyecto Node.js + Express
+      con vistas EJS y MySQL. Sigue las convenciones de este config.yaml.
+    persona: |
+      - tono: profesional, directo
+      - evitar: suposiciones sin datos concretos
+
+tech:
+  platform:
+    runtime: "node"
+    node_version: ">=16.0.0"
+    backend_framework: "express"
+    templating: "ejs"
+    frontend_helpers: "vanilla-js (AJAX), Bootstrap 5, CSS"
+  icons:
+    library: "bootstrap-icons-1.13.1"
+    location: "public/bootstrap-icons-1.13.1/"
+    usage: "SVG imports only (NOT icon font classes)"
+    format: '<img src="/bootstrap-icons-1.13.1/{icon-name}.svg" class="bi-svg" alt="">'
+    examples:
+      - '<img src="/bootstrap-icons-1.13.1/check-circle.svg" class="bi-svg" alt="" style="width: 24px; height: 24px;">'
+      - '<img src="/bootstrap-icons-1.13.1/exclamation-triangle.svg" class="bi-svg me-2" alt="" style="filter: invert(1); width: 20px; height: 20px;">'
+    notes: |
+      - NEVER use Bootstrap Icons font classes like <i class="bi bi-check"></i>
+      - Always use direct SVG imports from /bootstrap-icons-1.13.1/
+      - Use filter: invert(1) for white icons on dark backgrounds
+      - Size can be controlled with width/height inline styles
+      - Class "bi-svg" is standard for all icons
+  data_store:
+    primary: "mysql"
+    driver: "mysql2"
+    connection_example: |
+      const mysql = require('mysql2');
+
+      const pool = mysql.createPool({
+        connectionLimit: 10,
+        host: 'localhost',
+        port: 3307,
+        user: 'root',
+        password: '',
+        database: 'gestifleetbd'
+      });
+
+      module.exports = pool;
+    notes: "Estos detalles son el ejemplo usado en desarrollo (XAMPP). No guardar credenciales en el repo para producción."
+  infra:
+    local_dev: "XAMPP (MySQL local en puerto 3307)"
+    prod_db: "REPLACE_WITH_PROD_DB (ej. RDS/PlanetScale)"
+
+# Rutas y organización del código
+project_structure:
+  routes:
+    - path: "routes/api/*"
+      purpose: "Rutas API REST que devuelven JSON; lógica de negocio y consultas/adecuación/validaciones con la BD"
+    - path: "routes/views/*"
+      purpose: "Rutas que renderizan vistas EJS y sirven las páginas principales"
+  public: "public/ (assets: css, js, images)"
+  views: "views/ (plantillas .ejs)"
+  initial_load:
+    description: "Carga inicial de datos si la BD está vacía. Script JS con lógica. También existe endpoint/flow para carga en caliente cuando la app está activa."
+
+auth_and_permissions:
+  mechanism: "middleware Express (login, register, logout). Recomendado: express-session + middleware de autorización"
+  roles:
+    - name: "admin"
+      description: "Acceso global, CRUD sobre concesionarios, vehículos, empleados y reservas; puede ejecutar cargas iniciales y en caliente" 
+    - name: "empleado"
+      description: "Asociado a un concesionario; puede ver detalle de su concesionario, ver vehículos asociados y crear reservas para sí mismo"
+  notes: "Configurar middlewares para proteger rutas API y vistas. Los endpoints deben validar rol y concesionario asociado cuando aplique."
+
+business_rules:
+  concesionario:
+    admin_crud: true
+    empleado_access: "empleados pueden ver sólo el concesionario al que están vinculados"
+  vehiculo:
+    belongs_to_concesionario: true
+    admin_crud: true
+    empleado_view: "empleados ven sólo vehículos de su concesionario"
+  reserva:
+    creators: ["admin","empleado"]
+    business_logic: |
+      - reserva selecciona vehículo y rango horario
+      - usuario reserva para sí mismo (no hay usuarios externos)
+      - validaciones: horarios válidos, no solapamiento de reservas (p/vehículo y p/usuario)
+      - las reservas no pueden coincidir en horario para el mismo vehículo
+  filtros_y_listados:
+    - "Listados filtrables por concesionario, estado, fechas, tipo de vehículo"
+  estadisticas:
+    - "Estadísticas accesibles sólo por admin: coche más usado, número de reservas por período, etc."
+
+rules:
+  specs:
+    - "Cada endpoint debe incluir: path, method, auth_required, request (params/body), response example, errores y códigos HTTP"
+    - "Incluir ejemplos de payload JSON y ejemplos de uso via AJAX desde las vistas EJS"
+  tasks:
+    - "Dividir en subtareas manejables (ideal < 4h)"
+  tests:
+    - "Proveer tests unitarios e integración para lógica de reservas y validaciones de solapamiento"
+
+templates:
+  endpoint_spec: |
+    summary: "Resumen corto"
+    path: "/api/vehicles"
+    method: "GET"
+    auth: "required"
+    request:
+      query: "page, per_page, filter"
+    response:
+      200: "{ items: [...], total: N }"
+
+data_models:
+  Concesionario:
+    type: object
+    properties:
+      id:
+        type: integer
+      nombre:
+        type: string
+      direccion:
+        type: string
+    required: ["id","nombre"]
+  Vehiculo:
+    type: object
+    properties:
+      id: integer
+      concesionario_id: integer
+      marca: string
+      modelo: string
+      matricula: string
+    required: ["id","concesionario_id","matricula"]
+  Empleado:
+    type: object
+    properties:
+      id: integer
+      nombre: string
+      email: string
+      role: string
+      concesionario_id: integer
+    required: ["id","nombre","email","role"]
+  Reserva:
+    type: object
+    properties:
+      id: integer
+      vehiculo_id: integer
+      usuario_id: integer
+      start_at: string
+      end_at: string
+    required: ["id","vehiculo_id","start_at","end_at"]
+
+non_functional:
+  availability: "99.5% (sujeto a infra)"
+  latency:
+    p95: "300ms"
+  performance_tests: "k6 / local scripts"
+
+security:
+  secrets: "No guardar en repo; usar variables de entorno o store seguro"
+  notes: |
+    - "En desarrollo se usa XAMPP y credenciales locales; en producción usar DB gestionada y credenciales seguras."
+    - "Asegurar endpoints con CSRF cuando proceda y sanitizar inputs para evitar SQL injection (usar queries parametrizadas de mysql2)."
+
+observability:
+  logging: "winston o similar (logs de servidor)"
+  metrics: "exponer métricas básicas y health-checks"
+  monitoring: "exportar errores críticos a canal oncall"
+
+integrations:
+  payments:
+    provider: null
+  messaging:
+    provider: null
+
+documentation:
+  project_md: "docs/PROJECT.md"
+  agents_md: "docs/AGENTS.md"
+
+# ---------------------------------------------------------
+# ESQUEMA DE BASE DE DATOS (SQL) — añadido por petición del usuario
+# ---------------------------------------------------------
+database_schema_sql: |
+  SET FOREIGN_KEY_CHECKS = 0;
+
+  CREATE DATABASE IF NOT EXISTS gestifleetbd CHARACTER SET utf8 COLLATE utf8_spanish_ci;
+
+  USE gestifleetbd;
+
+  DROP TABLE IF EXISTS reservas;
+  DROP TABLE IF EXISTS vehiculos;
+  DROP TABLE IF EXISTS usuarios;
+  DROP TABLE IF EXISTS concesionarios;
+
+  CREATE TABLE IF NOT EXISTS concesionarios (
+    id_concesionario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ciudad VARCHAR(50) NOT NULL,
+    direccion VARCHAR(150) NOT NULL,
+    telefono_contacto VARCHAR(20) NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT TRUE
+  );
+
+  CREATE TABLE IF NOT EXISTS usuarios (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    correo VARCHAR(100) NOT NULL UNIQUE,
+    contrasenya VARCHAR(255) NOT NULL,
+    rol ENUM('Empleado','Admin') NOT NULL,
+    telefono VARCHAR(20) NOT NULL UNIQUE,
+    id_concesionario INT,
+    activo BOOLEAN NOT NULL DEFAULT TRUE,
+    FOREIGN KEY (id_concesionario) REFERENCES concesionarios(id_concesionario)
+  );
+
+  CREATE TABLE IF NOT EXISTS vehiculos (
+    id_vehiculo INT AUTO_INCREMENT PRIMARY KEY,
+    matricula VARCHAR(10) UNIQUE NOT NULL,
+    marca VARCHAR(50) NOT NULL,
+    modelo VARCHAR(50) NOT NULL,
+    anyo_matriculacion YEAR NOT NULL,
+    descripcion TEXT,
+    tipo ENUM('coche', 'suv', 'furgoneta', 'moto', 'deportivo', 'todoterreno', 'cabrio', 'pickup', 'otro') DEFAULT 'coche',
+    precio DECIMAL(10,2) NOT NULL,
+    numero_plazas TINYINT NOT NULL DEFAULT 5,
+    autonomia_km INT,
+    color VARCHAR(30),
+    imagen LONGBLOB,
+    id_concesionario INT,
+    activo BOOLEAN NOT NULL DEFAULT TRUE,
+    FOREIGN KEY (id_concesionario) REFERENCES concesionarios(id_concesionario)
+  );
+
+  CREATE TABLE IF NOT EXISTS reservas (
+    id_reserva INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT,
+    id_vehiculo INT,
+    fecha_inicio DATETIME NOT NULL,
+    fecha_fin DATETIME NOT NULL,
+    estado ENUM('activa','finalizada','cancelada') DEFAULT 'activa',
+    kilometros_recorridos INT,
+    incidencias_reportadas TEXT,
+    activo BOOLEAN NOT NULL DEFAULT TRUE,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+    FOREIGN KEY (id_vehiculo) REFERENCES vehiculos(id_vehiculo)
+  );
+
+  SET FOREIGN_KEY_CHECKS = 1;
+
+# ---------------------------------------------------------
+# MAPEOS Y NOTAS: adaptar data_models a nombres reales de BD
+# ---------------------------------------------------------
+db_field_mappings:
+  notes: |
+    - En la base de datos los PK/FK usan nombres con prefijo (ej. id_concesionario, id_usuario, id_vehiculo, id_reserva).
+    - En la sección data_models del config se usan nombres genéricos (id, concesionario_id, etc.).
+    - Recomendación: mantener las "domain models" en data_models legibles por la IA y usar un mapeador
+      en el código (por ejemplo, transformar id_concesionario <-> concesionario_id) o al hacer las consultas
+      aliasar las columnas (SELECT id_concesionario as concesionario_id ...).
+
+  example_mappings:
+    concesionario:
+      pk_db: "id_concesionario"
+      pk_model: "id"
+    usuario:
+      pk_db: "id_usuario"
+      pk_model: "id"
+    vehiculo:
+      pk_db: "id_vehiculo"
+      pk_model: "id"
+    reserva:
+      pk_db: "id_reserva"
+      pk_model: "id"
+
+  security_recommendations: |
+    - Usar consultas parametrizadas de mysql2 (pool.execute / pool.query con placeholders) para evitar SQL injection.
+    - No almacenar contraseñas en texto; aplicar hashing (bcrypt) antes de persistir.
+    - Validar y normalizar formatos de fecha/hora (UTC) y convertir al timezone apropiado en la capa de presentación.
+
+  reservation_conflicts_query_example: |
+    -- Ejemplo conceptual para comprobar solapamiento de reservas para un vehículo
+    SELECT COUNT(*) as overlaps
+    FROM reservas
+    WHERE id_vehiculo = ?
+      AND activo = 1
+      AND NOT (fecha_fin <= ? OR fecha_inicio >= ?);
+
+    -- Parámetros: [id_vehiculo, nueva_fecha_inicio, nueva_fecha_fin]
+
+
+meta:
+  created_by: "tu-equipo"
+  created_at: "2026-01-30"
+  last_updated_with_db: "2026-01-30"
+  notes: |
+    - "Rellenar repo_url y datos de producción"
+    - "Revisar estrategia de autenticación concreta (JWT vs session) y apuntarlo aquí"

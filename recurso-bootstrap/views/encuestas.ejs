@@ -1,0 +1,185 @@
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0">
+            <img src="/bootstrap-icons-1.13.1/clipboard-check.svg" class="bi-svg me-2" alt="" style="filter: invert(1); width: 30px; height: 30px;">
+            Encuesta de Satisfacción
+          </h2>
+        </div>
+        <div class="card-body">
+          <p class="lead text-muted mb-4">
+            Ayúdanos a mejorar valorando tu experiencia con GestiFleet
+          </p>
+
+          <form id="encuestaForm">
+            <!-- Pregunta 1: Accesibilidad -->
+            <div class="mb-4">
+              <label for="accesibilidad" class="form-label fw-bold">
+                ¿Qué opinas sobre la accesibilidad de la web?
+              </label>
+              <select id="accesibilidad" name="accesibilidad" class="form-select" required>
+                <option value="">Selecciona una opción...</option>
+                <option value="1">1 - Muy en desacuerdo</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5 - Neutral</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10 - Muy de acuerdo</option>
+              </select>
+            </div>
+
+            <!-- Pregunta 2: Colores -->
+            <div class="mb-4">
+              <label for="colores" class="form-label fw-bold">
+                ¿Qué te parecen los colores y diseño visual utilizados?
+              </label>
+              <select id="colores" name="colores" class="form-select" required>
+                <option value="">Selecciona una opción...</option>
+                <option value="1">1 - Muy en desacuerdo</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5 - Neutral</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10 - Muy de acuerdo</option>
+              </select>
+            </div>
+
+            <!-- Pregunta 3: Funcionalidades -->
+            <div class="mb-4">
+              <label for="funcionalidad" class="form-label fw-bold">
+                ¿Cómo valoras las funcionalidades añadidas?
+              </label>
+              <select id="funcionalidad" name="funcionalidad" class="form-select" required>
+                <option value="">Selecciona una opción...</option>
+                <option value="1">1 - Muy en desacuerdo</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5 - Neutral</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10 - Muy de acuerdo</option>
+              </select>
+            </div>
+
+            <!-- Pregunta 4: Equipo de desarrollo -->
+            <div class="mb-4">
+              <label for="equipo" class="form-label fw-bold">
+                ¿Qué tan guapos son los creadores?
+              </label>
+              <select id="equipo" name="equipo" class="form-select" required>
+                <option value="">Selecciona una opción...</option>
+                <option value="1">1 - Muy en desacuerdo</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5 - Neutral</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10 - Muy de acuerdo</option>
+              </select>
+            </div>
+
+            <!-- Botón de envío -->
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <img src="/bootstrap-icons-1.13.1/send.svg" class="bi-svg me-2" alt="" style="filter: invert(1); width: 20px; height: 20px;">
+                Enviar Encuesta
+              </button>
+            </div>
+          </form>
+
+          <!-- Mensaje de resultado (oculto inicialmente) -->
+          <div id="mensajeResultado" class="mt-4 d-none"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Manejo del envío del formulario con AJAX
+  document.getElementById('encuestaForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Recoger valores de los selects y convertir a enteros
+    const data = {
+      accesibilidad: parseInt(document.getElementById('accesibilidad').value),
+      colores: parseInt(document.getElementById('colores').value),
+      funcionalidad: parseInt(document.getElementById('funcionalidad').value),
+      equipo: parseInt(document.getElementById('equipo').value)
+    };
+
+    const mensajeDiv = document.getElementById('mensajeResultado');
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+
+    try {
+      // Deshabilitar botón durante el envío
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...';
+
+      // Enviar petición POST
+      const response = await fetch('/api/encuestas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      // Mostrar mensaje según resultado
+      mensajeDiv.classList.remove('d-none');
+
+      if (result.success) {
+        mensajeDiv.className = 'alert alert-success mt-4';
+        mensajeDiv.innerHTML = `
+          <h5 class="alert-heading"><img src="/bootstrap-icons-1.13.1/check-circle.svg" class="bi-svg me-2" alt="" style="width: 24px; height: 24px;">¡Gracias por tu feedback!</h5>
+          <p class="mb-0">Tu encuesta ha sido enviada correctamente.</p>
+        `;
+
+        // Limpiar formulario
+        e.target.reset();
+      } else {
+        mensajeDiv.className = 'alert alert-danger mt-4';
+        mensajeDiv.innerHTML = `
+          <h5 class="alert-heading"><img src="/bootstrap-icons-1.13.1/exclamation-triangle.svg" class="bi-svg me-2" alt="" style="width: 24px; height: 24px;">Error</h5>
+          <p class="mb-0">${result.error || 'Ha ocurrido un error al enviar la encuesta.'}</p>
+        `;
+      }
+
+      // Ocultar mensaje después de 5 segundos
+      setTimeout(() => {
+        mensajeDiv.classList.add('d-none');
+      }, 5000);
+
+    } catch (error) {
+      console.error('Error al enviar encuesta:', error);
+      mensajeDiv.classList.remove('d-none');
+      mensajeDiv.className = 'alert alert-danger mt-4';
+      mensajeDiv.innerHTML = `
+        <h5 class="alert-heading"><img src="/bootstrap-icons-1.13.1/exclamation-triangle.svg" class="bi-svg me-2" alt="" style="width: 24px; height: 24px;">Error de red</h5>
+        <p class="mb-0">No se pudo conectar con el servidor. Por favor, inténtalo de nuevo.</p>
+      `;
+    } finally {
+      // Rehabilitar botón
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<img src="/bootstrap-icons-1.13.1/send.svg" class="bi-svg me-2" alt="" style="filter: invert(1); width: 20px; height: 20px;">Enviar Encuesta';
+    }
+  });
+</script>

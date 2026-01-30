@@ -83,11 +83,13 @@ const vehiculosRoutes = require('./routes/vehiculos');
 const reservasRoutes = require('./routes/reservas');
 const concesionariosRoutes = require('./routes/concesionarios');
 const usuariosRoutes = require('./routes/usuarios');
+const encuestasRoutes = require('./routes/encuestas');
 // APIs
 const concesionariosAjax = require('./routes/api/concesionarios');
 const usuariosAjax = require('./routes/api/usuarios');
 const vehiculosAjax = require('./routes/api/vehiculos');
 const reservasAjax = require('./routes/api/reservas');
+const encuestasAjax = require('./routes/api/encuestas');
 const cargaInicialRoutes = require('./routes/cargaInicial');
 const importacionApi = require('./routes/api/importacion');
 
@@ -96,11 +98,13 @@ app.use('/vehiculos', vehiculosRoutes);
 app.use('/reserva', reservasRoutes);
 app.use('/concesionarios', concesionariosRoutes);
 app.use('/usuarios', usuariosRoutes);
+app.use('/', encuestasRoutes);
 
 app.use('/api/concesionarios', concesionariosAjax);
 app.use('/api/usuarios', usuariosAjax);
 app.use('/api/vehiculos', vehiculosAjax);
 app.use('/api/reservas', reservasAjax);
+app.use('/api', encuestasAjax);
 
 app.use('/carga-inicial', cargaInicialRoutes);
 app.use('/api/importacion', importacionApi);

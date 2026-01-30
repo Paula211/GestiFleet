@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(openspec new:*)",
+      "Bash(openspec status:*)",
+      "Bash(openspec instructions proposal:*)",
+      "Bash(openspec show:*)",
+      "Bash(openspec instructions design:*)",
+      "Bash(openspec instructions specs:*)",
+      "Bash(openspec instructions tasks:*)",
+      "Bash(openspec instructions apply:*)",
+      "Bash(timeout 5 node:*)",
+      "Bash(node:*)",
+      "Bash(node -c:*)",
+      "Bash(dir:*)",
+      "Bash(netstat:*)",
+      "Bash(curl:*)",
+      "Bash(bash:*)"
+    ]
+  }
+}
