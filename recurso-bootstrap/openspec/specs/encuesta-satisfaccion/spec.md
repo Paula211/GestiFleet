@@ -37,7 +37,7 @@ El sistema SHALL proporcionar una ruta `GET /encuestas` que renderice una vista 
   - "¿Qué opinas sobre la accesibilidad de la web?"
   - "¿Qué te parecen los colores y diseño visual utilizados?"
   - "¿Cómo valoras las funcionalidades añadidas?"
-  - "¿Qué tan guapos son los creadores?"
+  - "¿Cómo valoras la atención del equipo de soporte?"
   - "¿Recomendarías esta aplicación a otros usuarios?"
 
 ### Requirement: Cada pregunta debe usar select con escala 1-10

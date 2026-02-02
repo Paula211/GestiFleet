@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { isGuest, isAdmin } = require('../middleware/auth');
 const bcrypt = require('bcrypt');
+const encuestasStore = require('../lib/encuestasStore');
 // npm install bcrypt
 // npm install mysql2
 
@@ -284,12 +285,14 @@ router.get('/estadisticas', isAdmin, (req, res) => {
       `, (err3, vehiculoMasUsadoRows) => {
         if (err3) return res.status(500).render('error', { mensaje: 'Error al cargar estadísticas (3)' });
         const vehiculoMasUsado = vehiculoMasUsadoRows[0] || null;
+        const total_encuestas = encuestasStore.calcularEstadisticas().totalRespuestas;
         res.render('estadisticasAdmin', {
           title: 'Estadísticas',
           usuarioSesion: usuario,
           total_reservas,
           reservasPorConcesionario,
-          vehiculoMasUsado
+          vehiculoMasUsado,
+          total_encuestas
         });
       });
     });

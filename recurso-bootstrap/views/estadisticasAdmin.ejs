@@ -6,14 +6,14 @@
 
   <div class="row mb-4">
 
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="vehiculo-card card-base stat-card text-center p-3 h-100 d-flex flex-column justify-content-center align-items-center">
         <h2 class="card-title display-4 mb-2"><%= total_reservas %></h2>
         <p class="card-text">Total Reservas</p>
       </div>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-3">
     <% if (vehiculoMasUsado) { %>
         <a href="/vehiculos/<%= vehiculoMasUsado.id_vehiculo %>" 
         class="text-decoration-none w-100">
@@ -32,7 +32,7 @@
     </div>
 
 
-    <div class="col-md-4">
+    <div class="col-md-3">
     <% if (reservasPorConcesionario && reservasPorConcesionario.length > 0) { %>
         <a href="/concesionarios/<%= reservasPorConcesionario[0].id_concesionario %>" 
         class="text-decoration-none w-100">
@@ -50,6 +50,12 @@
     <% } %>
     </div>
 
+    <div class="col-md-3">
+      <div class="vehiculo-card card-base stat-card text-center p-3 h-100 d-flex flex-column justify-content-center align-items-center">
+        <h2 class="card-title display-4 mb-2"><%= total_encuestas %></h2>
+        <p class="card-text">Total Encuestas</p>
+      </div>
+    </div>
 
   </div>
 

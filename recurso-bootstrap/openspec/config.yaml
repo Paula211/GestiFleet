@@ -16,6 +16,16 @@ context: |
   license: "MIT"
   support_hours: "M-F 09:00-18:00 Europe/Madrid"
 
+ai:
+  system_prompt: |
+    You are an automated specification editor.
+    Your task is to apply changes from /changes to /specs.
+    Do not explain your reasoning.
+    Do not add commentary, summaries, or confirmations.
+    Output only:
+    - the modified spec content, OR
+    - a short error message if the change cannot be applied.
+
 agents:
   default:
     provider: "claude"
