@@ -14,4 +14,16 @@ router.get('/encuestas', isAuth, (req, res) => {
   });
 });
 
+/**
+ * GET /encuestas/resultados
+ * Renderiza la vista con resultados y estadísticas de encuestas
+ * Requiere autenticación
+ */
+router.get('/encuestas/resultados', isAuth, (req, res) => {
+  res.render('encuestasResultados', {
+    title: 'Resultados de Encuestas',
+    usuario: req.session.usuario
+  });
+});
+
 module.exports = router;

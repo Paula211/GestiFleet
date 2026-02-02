@@ -15,7 +15,10 @@
       "Bash(dir:*)",
       "Bash(netstat:*)",
       "Bash(curl:*)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Bash(npx openspec:*)",
+      "Bash(test:*)",
+      "Bash(powershell -Command:*)"
     ]
   }
 }

@@ -25,19 +25,20 @@ El sistema SHALL proporcionar una ruta `GET /encuestas` que renderice una vista 
 
 #### Scenario: Usuario autenticado accede al formulario
 - **WHEN** un usuario autenticado accede a `/encuestas`
-- **THEN** el sistema debe renderizar una página con un formulario que contenga 4 preguntas con elementos `<select>`
+- **THEN** el sistema debe renderizar una página con un formulario que contenga 5 preguntas con elementos `<select>`
 
 #### Scenario: Usuario no autenticado es redirigido
 - **WHEN** un usuario no autenticado intenta acceder a `/encuestas`
 - **THEN** el sistema debe redirigir al login con código HTTP 302 o 401
 
-#### Scenario: Formulario incluye las 4 preguntas requeridas
+#### Scenario: Formulario incluye las 5 preguntas requeridas
 - **WHEN** el formulario se renderiza
-- **THEN** debe mostrar exactamente 4 preguntas con labels:
+- **THEN** debe mostrar exactamente 5 preguntas con labels:
   - "¿Qué opinas sobre la accesibilidad de la web?"
   - "¿Qué te parecen los colores y diseño visual utilizados?"
   - "¿Cómo valoras las funcionalidades añadidas?"
   - "¿Qué tan guapos son los creadores?"
+  - "¿Recomendarías esta aplicación a otros usuarios?"
 
 ### Requirement: Cada pregunta debe usar select con escala 1-10
 El sistema SHALL proporcionar para cada pregunta un elemento `<select>` con opciones numéricas del 1 al 10, donde 1 representa "muy en desacuerdo" y 10 representa "muy de acuerdo".
@@ -63,7 +64,8 @@ El sistema SHALL proporcionar un endpoint `POST /api/encuestas` que reciba respu
     "accesibilidad": 8,
     "colores": 9,
     "funcionalidad": 7,
-    "equipo": 10
+    "equipo": 10,
+    "recomendacion": 8
   }
   ```
 - **Success Response** (200):
@@ -76,6 +78,7 @@ El sistema SHALL proporcionar un endpoint `POST /api/encuestas` que reciba respu
       "colores": 9,
       "funcionalidad": 7,
       "equipo": 10,
+      "recomendacion": 8,
       "timestamp": "2026-01-30T10:30:00.000Z"
     }
   }
@@ -113,7 +116,8 @@ document.getElementById('encuestaForm').addEventListener('submit', async (e) => 
     accesibilidad: parseInt(document.getElementById('accesibilidad').value),
     colores: parseInt(document.getElementById('colores').value),
     funcionalidad: parseInt(document.getElementById('funcionalidad').value),
-    equipo: parseInt(document.getElementById('equipo').value)
+    equipo: parseInt(document.getElementById('equipo').value),
+    recomendacion: parseInt(document.getElementById('recomendacion').value)
   };
 
   try {
@@ -138,7 +142,7 @@ document.getElementById('encuestaForm').addEventListener('submit', async (e) => 
 ```
 
 #### Scenario: Envío exitoso con datos válidos
-- **WHEN** se envía un POST a `/api/encuestas` con los 4 campos numéricos válidos (1-10) y usuario autenticado
+- **WHEN** se envía un POST a `/api/encuestas` con los 5 campos numéricos válidos (1-10) y usuario autenticado
 - **THEN** el sistema debe retornar HTTP 200 con `success: true` y almacenar la respuesta con timestamp en el array en memoria
 
 #### Scenario: Envío rechazado por datos faltantes
@@ -154,7 +158,7 @@ document.getElementById('encuestaForm').addEventListener('submit', async (e) => 
 - **THEN** el sistema debe retornar HTTP 401 con mensaje de error de autenticación
 
 ### Requirement: Respuestas deben almacenarse en memoria como array de objetos
-El sistema SHALL mantener un array en memoria que almacene cada respuesta como un objeto JSON con los campos de las 4 preguntas más un timestamp.
+El sistema SHALL mantener un array en memoria que almacene cada respuesta como un objeto JSON con los campos de las 5 preguntas más un timestamp.
 
 **Estructura de datos**:
 ```javascript
@@ -165,6 +169,7 @@ const respuestas = [
     colores: 9,
     funcionalidad: 7,
     equipo: 10,
+    recomendacion: 8,
     timestamp: "2026-01-30T10:30:00.000Z"
   },
   {
@@ -172,6 +177,7 @@ const respuestas = [
     colores: 8,
     funcionalidad: 9,
     equipo: 10,
+    recomendacion: 7,
     timestamp: "2026-01-30T11:15:00.000Z"
   }
 ];
@@ -179,7 +185,7 @@ const respuestas = [
 
 #### Scenario: Nueva respuesta se añade al array
 - **WHEN** se recibe una respuesta válida en el endpoint POST
-- **THEN** el sistema debe añadir un nuevo objeto al array con los 4 valores numéricos y un campo `timestamp` con la fecha/hora actual en formato ISO
+- **THEN** el sistema debe añadir un nuevo objeto al array con los 5 valores numéricos y un campo `timestamp` con la fecha/hora actual en formato ISO
 
 #### Scenario: Array persiste durante ejecución del servidor
 - **WHEN** se envían múltiples respuestas durante la misma sesión del servidor

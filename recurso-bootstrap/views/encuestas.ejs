@@ -94,6 +94,26 @@
               </select>
             </div>
 
+            <!-- Pregunta 5: Recomendación -->
+            <div class="mb-4">
+              <label for="recomendacion" class="form-label fw-bold">
+                ¿Recomendarías esta aplicación a otros usuarios?
+              </label>
+              <select id="recomendacion" name="recomendacion" class="form-select" required>
+                <option value="">Selecciona una opción...</option>
+                <option value="1">1 - Muy en desacuerdo</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5 - Neutral</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10 - Muy de acuerdo</option>
+              </select>
+            </div>
+
             <!-- Botón de envío -->
             <div class="d-grid gap-2">
               <button type="submit" class="btn btn-primary btn-lg">
@@ -121,7 +141,8 @@
       accesibilidad: parseInt(document.getElementById('accesibilidad').value),
       colores: parseInt(document.getElementById('colores').value),
       funcionalidad: parseInt(document.getElementById('funcionalidad').value),
-      equipo: parseInt(document.getElementById('equipo').value)
+      equipo: parseInt(document.getElementById('equipo').value),
+      recomendacion: parseInt(document.getElementById('recomendacion').value)
     };
 
     const mensajeDiv = document.getElementById('mensajeResultado');
@@ -150,11 +171,13 @@
         mensajeDiv.className = 'alert alert-success mt-4';
         mensajeDiv.innerHTML = `
           <h5 class="alert-heading"><img src="/bootstrap-icons-1.13.1/check-circle.svg" class="bi-svg me-2" alt="" style="width: 24px; height: 24px;">¡Gracias por tu feedback!</h5>
-          <p class="mb-0">Tu encuesta ha sido enviada correctamente.</p>
+          <p class="mb-0">Tu encuesta ha sido enviada correctamente. Redirigiendo a resultados...</p>
         `;
 
-        // Limpiar formulario
-        e.target.reset();
+        // Redirigir a resultados después de 1.5 segundos
+        setTimeout(() => {
+          window.location.href = '/encuestas/resultados';
+        }, 1500);
       } else {
         mensajeDiv.className = 'alert alert-danger mt-4';
         mensajeDiv.innerHTML = `

@@ -1,0 +1,232 @@
+<div class="container-fluid estadisticas-content">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+      <img src="/bootstrap-icons-1.13.1/bar-chart.svg" class="bi-svg me-2" alt="" style="width: 36px; height: 36px;">
+      <%= title %>
+    </h1>
+  </div>
+
+  <!-- Mensaje cuando no hay respuestas -->
+  <div id="sinRespuestas" class="alert alert-info d-none" role="alert">
+    <h5 class="alert-heading">
+      <img src="/bootstrap-icons-1.13.1/info-circle.svg" class="bi-svg me-2" alt="" style="width: 24px; height: 24px;">
+      No hay respuestas todavía
+    </h5>
+    <p class="mb-0">Aún no se han recibido respuestas de encuestas. Invita a los usuarios a completar la encuesta de satisfacción.</p>
+  </div>
+
+  <!-- Indicador de carga -->
+  <div id="cargando" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-3 text-muted">Cargando estadísticas...</p>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div id="errorCarga" class="alert alert-danger d-none" role="alert">
+    <h5 class="alert-heading">
+      <img src="/bootstrap-icons-1.13.1/exclamation-triangle.svg" class="bi-svg me-2" alt="" style="width: 24px; height: 24px;">
+      Error al cargar estadísticas
+    </h5>
+    <p class="mb-0">No se pudieron cargar las estadísticas. Por favor, inténtalo de nuevo más tarde.</p>
+  </div>
+
+  <!-- Contenedor de estadísticas (oculto inicialmente) -->
+  <div id="contenidoEstadisticas" class="d-none">
+
+    <!-- Total de respuestas y promedios -->
+    <div class="row mb-4">
+
+      <!-- Total de respuestas -->
+      <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+        <div class="vehiculo-card card-base stat-card text-center p-3 h-100 d-flex flex-column justify-content-center align-items-center">
+          <h2 class="card-title display-4 mb-2" id="totalRespuestas">0</h2>
+          <p class="card-text">Total de Respuestas</p>
+        </div>
+      </div>
+
+      <!-- Promedio Accesibilidad -->
+      <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+        <div class="vehiculo-card card-base stat-card text-center p-3 h-100 d-flex flex-column justify-content-center align-items-center">
+          <h2 class="card-title display-4 mb-2" id="promedioAccesibilidad">0.0</h2>
+          <p class="card-text">Accesibilidad</p>
+          <small class="text-muted">Promedio</small>
+        </div>
+      </div>
+
+      <!-- Promedio Colores -->
+      <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+        <div class="vehiculo-card card-base stat-card text-center p-3 h-100 d-flex flex-column justify-content-center align-items-center">
+          <h2 class="card-title display-4 mb-2" id="promedioColores">0.0</h2>
+          <p class="card-text">Colores y Diseño</p>
+          <small class="text-muted">Promedio</small>
+        </div>
+      </div>
+
+      <!-- Promedio Funcionalidad -->
+      <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+        <div class="vehiculo-card card-base stat-card text-center p-3 h-100 d-flex flex-column justify-content-center align-items-center">
+          <h2 class="card-title display-4 mb-2" id="promedioFuncionalidad">0.0</h2>
+          <p class="card-text">Funcionalidad</p>
+          <small class="text-muted">Promedio</small>
+        </div>
+      </div>
+
+      <!-- Promedio Equipo -->
+      <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+        <div class="vehiculo-card card-base stat-card text-center p-3 h-100 d-flex flex-column justify-content-center align-items-center">
+          <h2 class="card-title display-4 mb-2" id="promedioEquipo">0.0</h2>
+          <p class="card-text">Equipo de Desarrollo</p>
+          <small class="text-muted">Promedio</small>
+        </div>
+      </div>
+
+      <!-- Promedio Recomendación -->
+      <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+        <div class="vehiculo-card card-base stat-card text-center p-3 h-100 d-flex flex-column justify-content-center align-items-center">
+          <h2 class="card-title display-4 mb-2" id="promedioRecomendacion">0.0</h2>
+          <p class="card-text">Recomendación</p>
+          <small class="text-muted">Promedio</small>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Distribución unificada de valores -->
+    <div class="row">
+      <div class="col-12">
+        <div class="table-responsive">
+          <h3 class="mb-3">Distribución de Respuestas por Categoría</h3>
+          <table class="table table-hover table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th scope="col" class="text-center">Valor</th>
+                <th scope="col" class="text-center">Accesibilidad</th>
+                <th scope="col" class="text-center">Colores</th>
+                <th scope="col" class="text-center">Funcionalidad</th>
+                <th scope="col" class="text-center">Equipo</th>
+                <th scope="col" class="text-center">Recomendación</th>
+              </tr>
+            </thead>
+            <tbody id="tablaUnificada">
+              <!-- Se llenará dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  // Cargar estadísticas al cargar la página
+  document.addEventListener('DOMContentLoaded', async () => {
+    const cargandoDiv = document.getElementById('cargando');
+    const errorDiv = document.getElementById('errorCarga');
+    const sinRespuestasDiv = document.getElementById('sinRespuestas');
+    const contenidoDiv = document.getElementById('contenidoEstadisticas');
+
+    try {
+      // Hacer fetch al endpoint de resultados
+      const response = await fetch('/api/encuestas/resultados', {
+        method: 'GET',
+        credentials: 'same-origin'
+      });
+
+      // Verificar si la respuesta es OK
+      if (!response.ok) {
+        console.error('Error HTTP:', response.status, response.statusText);
+        const text = await response.text();
+        console.error('Respuesta:', text);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+
+      // Ocultar indicador de carga
+      cargandoDiv.classList.add('d-none');
+
+      if (result.success) {
+        const { totalRespuestas, promedios, distribuciones } = result.data;
+
+        // Si no hay respuestas, mostrar mensaje
+        if (totalRespuestas === 0) {
+          sinRespuestasDiv.classList.remove('d-none');
+          return;
+        }
+
+        // Mostrar contenido de estadísticas
+        contenidoDiv.classList.remove('d-none');
+
+        // Actualizar total de respuestas
+        document.getElementById('totalRespuestas').textContent = totalRespuestas;
+
+        // Actualizar promedios (formatear a 1 decimal)
+        document.getElementById('promedioAccesibilidad').textContent = promedios.accesibilidad.toFixed(1);
+        document.getElementById('promedioColores').textContent = promedios.colores.toFixed(1);
+        document.getElementById('promedioFuncionalidad').textContent = promedios.funcionalidad.toFixed(1);
+        document.getElementById('promedioEquipo').textContent = promedios.equipo.toFixed(1);
+        document.getElementById('promedioRecomendacion').textContent = promedios.recomendacion.toFixed(1);
+
+        // Poblar tabla unificada de distribución
+        poblarTablaUnificada(distribuciones);
+
+      } else {
+        // Error en la respuesta del servidor
+        errorDiv.classList.remove('d-none');
+      }
+
+    } catch (error) {
+      console.error('Error al cargar estadísticas:', error);
+      cargandoDiv.classList.add('d-none');
+      errorDiv.classList.remove('d-none');
+    }
+  });
+
+  // Función para poblar la tabla unificada de distribución
+  function poblarTablaUnificada(distribuciones) {
+    const tbody = document.getElementById('tablaUnificada');
+    tbody.innerHTML = '';
+
+    const categorias = ['accesibilidad', 'colores', 'funcionalidad', 'equipo', 'recomendacion'];
+
+    // Encontrar el valor máximo para cada categoría (para resaltar celdas)
+    const maximos = {};
+    categorias.forEach(cat => {
+      const valores = Object.values(distribuciones[cat]);
+      maximos[cat] = Math.max(...valores);
+    });
+
+    // Crear filas para valores del 1 al 10
+    for (let i = 1; i <= 10; i++) {
+      const tr = document.createElement('tr');
+
+      // Columna de valor
+      const tdValor = document.createElement('td');
+      tdValor.className = 'text-center';
+      tdValor.innerHTML = `<strong>${i}</strong>`;
+      tr.appendChild(tdValor);
+
+      // Columnas de cada categoría
+      categorias.forEach(cat => {
+        const cantidad = distribuciones[cat][i.toString()] || 0;
+        const td = document.createElement('td');
+        td.className = 'text-center';
+        td.textContent = cantidad;
+
+        // Resaltar celda si es el valor máximo de esa categoría
+        if (cantidad > 0 && cantidad === maximos[cat]) {
+          td.classList.add('table-success');
+        }
+
+        tr.appendChild(td);
+      });
+
+      tbody.appendChild(tr);
+    }
+  }
+</script>

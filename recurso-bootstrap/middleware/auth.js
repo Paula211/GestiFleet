@@ -7,6 +7,16 @@ function isAuth(req, res, next) {
     res.redirect('/login');
 }
 
+function isAuthApi(req, res, next) {
+    if (req.session.usuario) {
+        return next();
+    }
+    return res.status(401).json({
+        success: false,
+        error: 'Autenticación requerida'
+    });
+}
+
 function isGuest(req, res, next) {
     if (!req.session.usuario) {
         return next();
@@ -129,6 +139,7 @@ function isEmpty(req, res, next) {
 
 module.exports = {
     isAuth,
+    isAuthApi,
     isGuest,
     isAdmin,
     isAdminOrSelf,

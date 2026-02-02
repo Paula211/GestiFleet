@@ -75,7 +75,29 @@ Implement tasks from an OpenSpec change.
    - Error or blocker encountered → report and wait for guidance
    - User interrupts
 
-7. **On completion or pause, show status**
+7. **Update delta specs (after all tasks complete)**
+
+   When all tasks are complete, check if the change affects any existing specs:
+
+   a. **Read the proposal** to identify which capabilities are modified
+
+   b. **For each affected capability:**
+      - Check if a main spec exists at `openspec/specs/<capability>/spec.md`
+      - If yes, create a delta spec at `openspec/changes/<name>/specs/<capability>/spec.md`
+      - The delta spec should document what changed (ADDED, MODIFIED, or REMOVED requirements)
+
+   c. **Delta spec content:**
+      - Analyze the code changes made during implementation
+      - Document new requirements, modified scenarios, or removed features
+      - Use the standard delta spec format (ADDED/MODIFIED/REMOVED sections)
+
+   d. **If no existing specs affected:**
+      - Skip delta spec creation
+      - The change may be creating entirely new capabilities (handle in archive)
+
+   **Note:** This ensures that when `/opsx:archive` runs, it can sync the changes to main specs automatically.
+
+8. **On completion or pause, show status**
 
    Display:
    - Tasks completed this session
