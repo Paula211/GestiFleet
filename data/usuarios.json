@@ -1,0 +1,52 @@
+{
+  "usuarios": [
+    {
+      "nombre": "Laura Directora",
+      "correo": "director@gestifleet.com",
+      "contrasenya": "Demo1234!",
+      "rol": "Admin",
+      "telefono": "600111222",
+      "id_concesionario": null
+    },
+    {
+      "nombre": "Arturo López",
+      "correo": "arturo@gestifleet.com",
+      "contrasenya": "Demo1234!",
+      "rol": "Empleado",
+      "telefono": "600333444",
+      "id_concesionario": 1
+    },
+    {
+      "nombre": "Pau García",
+      "correo": "pau@gestifleet.com",
+      "contrasenya": "Demo1234!",
+      "rol": "Empleado",
+      "telefono": "600555666",
+      "id_concesionario": 1
+    },
+    {
+      "nombre": "Elena Ventas",
+      "correo": "elena@gestifleet.com",
+      "contrasenya": "Demo1234!",
+      "rol": "Empleado",
+      "telefono": "600777888",
+      "id_concesionario": 1
+    },
+    {
+      "nombre": "Carlos Taller",
+      "correo": "carlos@gestifleet.com",
+      "contrasenya": "Demo1234!",
+      "rol": "Empleado",
+      "telefono": "600999000",
+      "id_concesionario": 2
+    },
+    {
+      "nombre": "Sofía Recepción",
+      "correo": "sofia@gestifleet.com",
+      "contrasenya": "Demo1234!",
+      "rol": "Empleado",
+      "telefono": "600123123",
+      "id_concesionario": 5
+    }
+  ]
+}
