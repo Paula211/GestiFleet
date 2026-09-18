@@ -18,7 +18,7 @@ app.use(express.json({ limit: '50mb' })); // Aumentamos límite por si el JSON e
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
 app.use(session({
-  secret: 'gestifleet',
+  secret: process.env.SESSION_SECRET || 'gestifleet',
   resave: false,
   saveUninitialized: false
 }));

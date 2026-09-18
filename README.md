@@ -93,7 +93,7 @@ Abre `http://localhost:3000`.
 
 ### Configuración
 
-Por defecto se conecta a `localhost:3307` con usuario `root`, contraseña vacía y base de datos `gestifleetbd`. Si tu MySQL está en otro sitio, define las variables de entorno antes de arrancar: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` y `PORT`. Están documentadas en `.env.example`.
+Por defecto se conecta a `localhost:3307` con usuario `root`, contraseña vacía y base de datos `gestifleetbd`. Si tu MySQL está en otro sitio, define las variables de entorno antes de arrancar: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` y `PORT`. Están documentadas en `.env.example`, junto con `SESSION_SECRET`, que firma la cookie de sesión y conviene cambiar en cualquier despliegue real.
 
 Ten en cuenta que el proyecto **no usa dotenv**, así que un fichero `.env` no se carga solo: o exportas las variables en tu shell, o instalas `dotenv` y añades `require('dotenv').config();` al principio de `app.js`.
 
